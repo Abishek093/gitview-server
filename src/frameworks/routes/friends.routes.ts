@@ -3,6 +3,8 @@ import { friendsController } from "../../config/container";
 
 const friendsRouter = express.Router();
 
-friendsRouter.post("/:username", friendsController.findAndSaveFriends);
+friendsRouter.get("/:username/followers", friendsController.findAndSaveFriends);
+friendsRouter.get("/:username", friendsController.getFriendsForUser);
+
 
 export default friendsRouter;

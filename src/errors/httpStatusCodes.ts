@@ -8,7 +8,8 @@ export enum HttpStatusCode {
     FORBIDDEN = 403, // User authenticated but not allowed to perform this action
     NOT_FOUND = 404, // Resource not found
     CONFLICT = 409, // Conflict in request (e.g., duplicate data)
-    INTERNAL_SERVER = 500 // Server-side error
+    INTERNAL_SERVER = 500, // Server-side error
+    TOO_MANY_REQUESTS=429
 }
 
 export default HttpStatusCode;

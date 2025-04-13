@@ -27,4 +27,8 @@ export class FriendsInteractor implements IFriendsInteractor {
 
     return friendEntities;
   }
+
+  async getFriendsForUser(username: string): Promise<FriendEntity[]> {
+    return this.friendsRepository.getFriendsForUser(username);
+  }
 }

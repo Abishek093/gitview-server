@@ -23,8 +23,8 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'"],
     },
   },
-  hsts: { maxAge: 31536000, includeSubDomains: true }, 
-  xssFilter: true, 
+  hsts: { maxAge: 31536000, includeSubDomains: true },
+  xssFilter: true,
 }));
 
 app.use(
@@ -39,13 +39,13 @@ app.use(
 app.use(morgan('dev'));
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, 
-  max: 100, 
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { error: 'Too many requests from this IP, please try again later.' },
-  standardHeaders: true, 
-  legacyHeaders: false, 
+  standardHeaders: true,
+  legacyHeaders: false,
 });
-app.use(limiter); 
+app.use(limiter);
 
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({
@@ -57,6 +57,12 @@ app.get('/health', (req: Request, res: Response) => {
 });
 
 app.use('/api', router);
+
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
