@@ -18,4 +18,13 @@ export class UserGitHubService {
     return response.data.map((u: any) => u.login);
   }
   
+  async fetchUserRepos(username: string): Promise<any[]> {
+    const response = await axios.get(`https://api.github.com/users/${username}/repos`);
+    return response.data;
+  }
+
+  async fetchRepoDetails(username: string, repoName: string): Promise<any> {
+    const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}`);
+    return response.data;
+  }
 }

@@ -11,6 +11,11 @@ import { FriendsRepository } from '../modules/friends/repository/FriendsReposito
 import { IFriendsInteractor } from '../modules/friends/interactor/IFriendsInteractor';
 import { FriendsInteractor } from '../modules/friends/interactor/FriendsInteractor';
 import { FriendsController } from '../modules/friends/controller/FriendsController';
+import { IRepoRepository } from '../modules/repo/repository/IRepoRepository';
+import { RepoRepository } from '../modules/repo/repository/RepoRepository';
+import { IRepoInteractor } from '../modules/repo/interactor/IRepoInteractor';
+import { RepoInteractor } from '../modules/repo/interactor/RepoInteractor';
+import { RepoController } from '../modules/repo/controller/RepoControlelr';
 
 
 container.register(UserGitHubService, { useClass: UserGitHubService });
@@ -22,10 +27,13 @@ container.register<IFriendsRepository>('IFriendsRepository', {useClass: FriendsR
 container.register<IFriendsInteractor>("IFriendsInteractor", { useClass: FriendsInteractor });
 container.register(FriendsController, { useClass: FriendsController });
 
-
+container.register<IRepoRepository>('IRepoRepository', {useClass: RepoRepository})
+container.register<IRepoInteractor>("IRepoInteractor", { useClass: RepoInteractor });
+container.register(RepoController, { useClass: RepoController });
 
 export const userController = container.resolve(UserController);
 export const friendsController = container.resolve(FriendsController);
+export const repoController = container.resolve(RepoController);
 
 
 export default container;

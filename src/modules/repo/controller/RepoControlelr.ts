@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import { IRepoInteractor } from "../interactor/IRepoInteractor";
+import { IRepoInteractor } from "../interactor/IRepoInteractor"; 
 import { NextFunction, Request, Response } from "express";
 
 @injectable()
@@ -8,9 +8,11 @@ export class RepoController {
 
   getUserRepos = async (req: Request, res: Response, next: NextFunction) => {
     const { username } = req.params;
-
+    const page = parseInt(req.query.page as string) || 1;
+    const perPage = parseInt(req.query.per_page as string) || 6;
+  
     try {
-      const repos = await this.repoInteractor.getUserRepos(username);
+      const repos = await this.repoInteractor.getUserRepos(username, page, perPage);
       res.status(200).json(repos);
     } catch (error) {
       next(error);

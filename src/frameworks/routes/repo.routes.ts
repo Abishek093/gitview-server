@@ -1,9 +1,9 @@
-// import { Router } from "express";
-// import { repoController } from "../../config/container";
+import { Router } from "express";
+import { repoController } from "../../config/container";
 
-// const repoRouter = Router();
+const repoRouter = Router();
 
-// repoRouter.get('/:username', repoController.getUserRepos);
-// repoRouter.get('/:username/:repoName', repoController.getRepoDetails);
+repoRouter.get('/:username', repoController.getUserRepos);
+repoRouter.get('/:username/:repoName', repoController.getRepoDetails);
 
-// export default repoRouter;
+export default repoRouter;
