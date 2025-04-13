@@ -11,7 +11,6 @@ export class UserRepository implements IUserRepository {
     async findByLogin(username: string): Promise<UserEntity | null> {
         try {
             const doc = await UserModel.findOne({ login: username, deleted: false }).lean();
-            console.log("From DB: ", doc)
             return doc ? new UserEntity(doc) : null;
         } catch (error) {
             throw new CustomError(

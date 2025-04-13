@@ -1,33 +1,30 @@
 import { inject, injectable } from "tsyringe";
-import { IUserInteractor } from "./IFriendsInteractor";
-import { GitHubService } from "../service/GitHubService";
-import { IUserRepository } from "../repository/IFriendsRepository";
-import { UserEntity } from "../entity/FriendsEntity";
-import CustomError from "../../../errors/customError";
-import HttpStatusCode from "../../../errors/httpStatusCodes";
+import { IFriendsInteractor } from "./IFriendsInteractor";
+import { IFriendsRepository } from "../repository/IFriendsRepository";
+import { UserGitHubService } from "../../user/service/UserGitHubService";
+import { FriendEntity } from "../entity/FriendsEntity";
 
 @injectable()
-export class UserInteractor implements IUserInteractor {
-    constructor(
-        @inject(GitHubService) private githubService: GitHubService,
-        @inject("IUserRepository") private userRepository: IUserRepository
-    ) { }
+export class FriendsInteractor implements IFriendsInteractor {
+  constructor(
+    @inject("IFriendsRepository") private friendsRepository: IFriendsRepository,
+    @inject(UserGitHubService) private githubService: UserGitHubService
+  ) {}
 
-    async saveUser(username: string): Promise<UserEntity> {
-        try {
-            const existing = await this.userRepository.findByLogin(username);
-            if (existing) return existing;
-        
-            const rawData = await this.githubService.fetchUser(username);
-            const user = new UserEntity(rawData);
-            return this.userRepository.save(user);            
-        } catch (error) {
-            throw error instanceof CustomError
-                ? error
-                : new CustomError(
-                    error instanceof Error ? error.message : "Unknown error",
-                    HttpStatusCode.INTERNAL_SERVER
-                );
-        }
-      }
+  async findAndSaveFriends(username: string): Promise<FriendEntity[]> {
+    const followers = await this.githubService.fetchFollowers(username); 
+    const following = await this.githubService.fetchFollowing(username); 
+
+    const mutuals = followers.filter(f => following.includes(f));
+    
+    const friendEntities = mutuals.map(friend => new FriendEntity({
+      user: username,
+      friend,
+      mutual: true
+    }));
+
+    await this.friendsRepository.saveMany(friendEntities);
+
+    return friendEntities;
+  }
 }

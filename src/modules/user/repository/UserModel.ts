@@ -18,6 +18,9 @@ const UserSchema = new Schema<IUserDocument>({
   created_at: { type: String, required: true },
   updated_at: { type: String, required: true },
   deleted: { type: Boolean, default: false }
+},
+{
+  versionKey: false,
 });
 
 const UserModel = model<IUserDocument>('User', UserSchema);

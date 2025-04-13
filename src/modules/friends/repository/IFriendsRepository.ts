@@ -1,6 +1,6 @@
-import { UserEntity } from "../entity/FriendsEntity";
+import { FriendEntity } from "../entity/FriendsEntity";
 
-export interface IUserRepository{
-    findByLogin(username: string): Promise<UserEntity | null>;
-    save(user: UserEntity): Promise<UserEntity>;
+export interface IFriendsRepository{
+    saveMany(friends: FriendEntity[]): Promise<void>
+    getFriendsForUser(username: string): Promise<FriendEntity[]>
 }

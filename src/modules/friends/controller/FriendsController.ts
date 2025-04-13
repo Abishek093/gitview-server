@@ -1,22 +1,21 @@
 import { inject, injectable } from "tsyringe";
-import { IUserInteractor } from "../interactor/IFriendsInteractor";
-import { NextFunction, Request, Response } from "express";
-
+import { IFriendsInteractor } from "../interactor/IFriendsInteractor";
+import { Request, Response, NextFunction } from "express";
 
 @injectable()
-export class UserController {
+export class FriendsController {
+  constructor(
+    @inject("IFriendsInteractor") private friendsInteractor: IFriendsInteractor
+  ) {}
 
-    constructor(@inject("IUserInteractor") private userInteractor: IUserInteractor) { }
+  findAndSaveFriends = async (req: Request, res: Response, next: NextFunction) => {
+    const { username } = req.params;
 
-    saveUser = async (req: Request, res: Response, next: NextFunction) => {
-        const { username } = req.params;
-
-        try {
-            const user = await this.userInteractor.saveUser(username);
-            res.status(200).json(user.toObject());
-        } catch (error) {
-            next(error)
-        }
-    };
-    
+    try {
+      const friends = await this.friendsInteractor.findAndSaveFriends(username);
+      res.status(200).json({ count: friends.length, friends });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

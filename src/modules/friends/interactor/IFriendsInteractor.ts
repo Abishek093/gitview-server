@@ -1,5 +1,5 @@
-import { UserEntity } from "../entity/FriendsEntity";
+import { FriendEntity } from "../entity/FriendsEntity";
 
-export interface IUserInteractor{
-    saveUser(username: string): Promise<UserEntity>;
+export interface IFriendsInteractor {
+    findAndSaveFriends(username: string): Promise<FriendEntity[]>
 }

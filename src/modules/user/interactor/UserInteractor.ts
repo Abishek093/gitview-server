@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IUserInteractor } from "./IUserInteractor";
-import { GitHubService } from "../service/GitHubService";
+import { UserGitHubService } from "../service/UserGitHubService";
 import { IUserRepository } from "../repository/IUserRepository";
 import { UserEntity } from "../entity/UserEntity";
 import CustomError from "../../../errors/customError";
@@ -9,7 +9,7 @@ import HttpStatusCode from "../../../errors/httpStatusCodes";
 @injectable()
 export class UserInteractor implements IUserInteractor {
     constructor(
-        @inject(GitHubService) private githubService: GitHubService,
+        @inject(UserGitHubService) private githubService: UserGitHubService,
         @inject("IUserRepository") private userRepository: IUserRepository
     ) { }
 

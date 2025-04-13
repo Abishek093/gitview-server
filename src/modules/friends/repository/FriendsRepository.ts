@@ -1,36 +1,17 @@
 import { injectable } from "tsyringe";
-import { IUserRepository } from "./IFriendsRepository";
-import { UserEntity } from "../entity/FriendsEntity";
-import UserModel from "./FriendsModel";
-import CustomError from "../../../errors/customError";
-import HttpStatusCode from "../../../errors/httpStatusCodes";
+import { IFriendsRepository } from "./IFriendsRepository";
+import FriendModel from "./FriendModel";
+import { FriendEntity } from "../entity/FriendsEntity"; 
 
 @injectable()
-export class UserRepository implements IUserRepository {
+export class FriendsRepository implements IFriendsRepository {
+  async saveMany(friends: FriendEntity[]): Promise<void> {
+    const docs = friends.map(f => new FriendModel(f.toObject()));
+    await FriendModel.insertMany(docs, { ordered: false }).catch(() => {});
+  }
 
-    async findByLogin(username: string): Promise<UserEntity | null> {
-        try {
-            const doc = await UserModel.findOne({ login: username, deleted: false }).lean();
-            console.log("From DB: ", doc)
-            return doc ? new UserEntity(doc) : null;
-        } catch (error) {
-            throw new CustomError(
-                error instanceof Error ? error.message : "Unknown error",
-                HttpStatusCode.INTERNAL_SERVER
-            );
-        }
-    }
-
-    async save(user: UserEntity): Promise<UserEntity> {
-        try {
-            const userDoc = new UserModel(user.toObject());
-            await userDoc.save();
-            return new UserEntity(userDoc.toObject());
-        } catch (error) {
-            throw new CustomError(
-                error instanceof Error ? error.message : "Unknown error",
-                HttpStatusCode.INTERNAL_SERVER
-            );
-        }
-    }
+  async getFriendsForUser(username: string): Promise<FriendEntity[]> {
+    const docs = await FriendModel.find({ user: username }).lean();
+    return docs.map(doc => new FriendEntity(doc));
+  }
 }
