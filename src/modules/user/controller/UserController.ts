@@ -38,4 +38,16 @@ export class UserController {
             next(error);
         }
     };
+
+    updateUser = async (req: Request, res: Response, next: NextFunction) => {
+        const { username } = req.params;
+        const updateData = req.body;
+        
+        try {
+            const updatedUser = await this.userInteractor.updateUser(username, updateData);
+            res.status(200).json(updatedUser.toObject());
+        } catch (error) {
+            next(error);
+        }
+    };
 }

@@ -6,10 +6,10 @@ export interface IFriendProps {
   }
   
   export class FriendEntity {
-    public readonly user: string;
-    public readonly friend: string;
-    public readonly mutual: boolean;
-    public readonly avatar_url?: string;
+    public user: string;
+    public friend: string;
+    public mutual: boolean;
+    public avatar_url?: string;
   
     constructor(props: IFriendProps) {
       this.user = props.user;

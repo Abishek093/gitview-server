@@ -16,7 +16,7 @@ export interface IUserProps {
 }
 
 export class UserEntity {
-  public readonly login: string;
+  public login: string;
   public name?: string;
   public company?: string;
   public blog?: string;
