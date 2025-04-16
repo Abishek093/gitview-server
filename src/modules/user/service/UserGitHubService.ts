@@ -26,14 +26,35 @@ export class UserGitHubService {
   }
 
   async fetchFollowers(username: string): Promise<string[]> {
-    const response = await githubAxios.get(`/users/${username}/followers`);
-    return response.data.map((u: any) => u.login);
+    try {
+      const response = await githubAxios.get(`/users/${username}/followers`);
+      return response.data.map((follower: any) => follower.login);
+    } catch (error) {
+      console.error('Error fetching followers:', error);
+      return [];
+    }
+  }
+
+  async fetchFollowersDetails(username: string): Promise<any[]> {
+    try {
+      const response = await githubAxios.get(`/users/${username}/followers`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching followers details:', error);
+      return [];
+    }
   }
 
   async fetchFollowing(username: string): Promise<string[]> {
-    const response = await githubAxios.get(`/users/${username}/following`);
-    return response.data.map((u: any) => u.login);
+    try {
+      const response = await githubAxios.get(`/users/${username}/following`);
+      return response.data.map((following: any) => following.login);
+    } catch (error) {
+      console.error('Error fetching following:', error);
+      return [];
+    }
   }
+
 
   async fetchUserRepos(username: string): Promise<any[]> {
     const response = await githubAxios.get(`/users/${username}/repos`);

@@ -1,7 +1,7 @@
+// UserController.ts
 import { inject, injectable } from "tsyringe";
 import { IUserInteractor } from "../interactor/IUserInteractor";
 import { NextFunction, Request, Response } from "express";
-
 
 @injectable()
 export class UserController {
@@ -19,4 +19,23 @@ export class UserController {
         }
     };
     
+    getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const users = await this.userInteractor.getAllUsers();
+            res.status(200).json(users);
+        } catch (error) {
+            next(error);
+        }
+    };
+    
+    deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+        const { username } = req.params;
+        
+        try {
+            await this.userInteractor.deleteUser(username);
+            res.status(200).json({ success: true, message: 'User deleted successfully' });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
