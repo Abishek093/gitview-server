@@ -32,7 +32,11 @@ export class RepoRepository implements IRepoRepository {
       
     async getRepoDetails(username: string, repoName: string): Promise<IRepoEntity> {
         try {
-            const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}`);
+            const response = await axios.get(`https://api.github.com/repos/${username}/${repoName}`, {
+                headers: {
+                    'Authorization': `token ${process.env.GITVIEW_TOKEN}`
+                }
+            });
             return this.mapToEntity(response.data);
         } catch (error) {
             throw new CustomError(
