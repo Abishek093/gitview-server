@@ -92,7 +92,6 @@ export class UserInteractor implements IUserInteractor {
                 }
             }
             
-            // Update the timestamp
             sanitizedUpdates.updated_at = new Date().toISOString();
             
             return this.userRepository.update(username, sanitizedUpdates);
@@ -105,4 +104,40 @@ export class UserInteractor implements IUserInteractor {
                 );
         }
     }
+
+    async searchUsers(filters: Record<string, any>): Promise<UserEntity[]> {
+        try {
+            const query = { ...filters, deleted: false };
+            return this.userRepository.search(query);
+        } catch (error) {
+            throw error instanceof CustomError
+                ? error
+                : new CustomError(
+                    error instanceof Error ? error.message : "Unknown error",
+                    HttpStatusCode.INTERNAL_SERVER
+                );
+        }
+    }
+
+
+    async getAllSortedUsers(sortField?: string, sortOrder?: number): Promise<UserEntity[]> {
+        try {
+            const allowedSortFields = ['login', 'name', 'company', 'location', 
+                'public_repos', 'public_gists', 'followers', 'following', 'created_at', 'updated_at'];
+            
+            // Default to 'login' if provided field is not allowed
+            const finalSortField = allowedSortFields.includes(sortField || '') ? sortField : 'login';
+            const finalSortOrder = sortOrder === -1 ? -1 : 1;
+            
+            return this.userRepository.findAllSorted(finalSortField, finalSortOrder);
+        } catch (error) {
+            throw error instanceof CustomError
+                ? error
+                : new CustomError(
+                    error instanceof Error ? error.message : "Unknown error",
+                    HttpStatusCode.INTERNAL_SERVER
+                );
+        }
+    }
+
 }

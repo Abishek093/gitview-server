@@ -10,13 +10,13 @@ export class UserRepository implements IUserRepository {
 
     async findByLogin(username: string): Promise<UserEntity | null> {
         try {
-            const doc = await UserModel.findOne({ 
-                login: username, 
-                deleted: false 
+            const doc = await UserModel.findOne({
+                login: username,
+                deleted: false
             }).lean();
-            
+
             console.log(`Repository - findByLogin: ${username} - Found: ${!!doc}`);
-            
+
             return doc ? new UserEntity(doc) : null;
         } catch (error) {
             console.error(`Repository - findByLogin error:`, error);
@@ -42,12 +42,12 @@ export class UserRepository implements IUserRepository {
     async save(user: UserEntity): Promise<UserEntity> {
         try {
             const existingUser = await UserModel.findOne({ login: user.login }).lean();
-            
+
             if (existingUser) {
                 console.log(`User ${user.login} already exists in database`);
                 return new UserEntity(existingUser);
             }
-            
+
             console.log(`Saving new user: ${user.login}`);
             const userDoc = new UserModel(user.toObject());
             await userDoc.save();
@@ -64,10 +64,10 @@ export class UserRepository implements IUserRepository {
     async softDelete(username: string): Promise<void> {
         try {
             const result = await UserModel.updateMany(
-                { login: username }, 
+                { login: username },
                 { deleted: true }
             );
-            
+
             if (result.matchedCount === 0) {
                 throw new CustomError("User not found", HttpStatusCode.NOT_FOUND);
             }
@@ -88,11 +88,11 @@ export class UserRepository implements IUserRepository {
                 { $set: updateData },
                 { new: true }
             ).lean();
-            
+
             if (!result) {
                 throw new CustomError("User not found", HttpStatusCode.NOT_FOUND);
             }
-            
+
             return new UserEntity(result);
         } catch (error) {
             throw error instanceof CustomError
@@ -101,6 +101,39 @@ export class UserRepository implements IUserRepository {
                     error instanceof Error ? error.message : "Unknown error",
                     HttpStatusCode.INTERNAL_SERVER
                 );
+        }
+    }
+
+    async search(filters: Record<string, any>): Promise<UserEntity[]> {
+        try {
+            const users = await UserModel.find(filters).lean();
+            if (users) {
+                return users.map(user => new UserEntity(user));
+            }
+            throw new CustomError("Search result not found", HttpStatusCode.NOT_FOUND)
+        } catch (error) {
+            throw new CustomError(
+                error instanceof Error ? error.message : "Unknown error",
+                HttpStatusCode.INTERNAL_SERVER
+            );
+        }
+    }
+
+    async findAllSorted(sortField: string = 'login', sortOrder: number = 1): Promise<UserEntity[]> {
+        try {
+            const sortOptions: { [key: string]: 1 | -1 } = {};
+            sortOptions[sortField] = sortOrder === 1 ? 1 : -1;
+
+            const docs = await UserModel.find({ deleted: false })
+                .sort(sortOptions)
+                .lean();
+
+            return docs.map(doc => new UserEntity(doc));
+        } catch (error) {
+            throw new CustomError(
+                error instanceof Error ? error.message : "Unknown error",
+                HttpStatusCode.INTERNAL_SERVER
+            );
         }
     }
 }

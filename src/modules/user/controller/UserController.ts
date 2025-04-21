@@ -1,4 +1,3 @@
-// UserController.ts
 import { inject, injectable } from "tsyringe";
 import { IUserInteractor } from "../interactor/IUserInteractor";
 import { NextFunction, Request, Response } from "express";
@@ -46,6 +45,35 @@ export class UserController {
         try {
             const updatedUser = await this.userInteractor.updateUser(username, updateData);
             res.status(200).json(updatedUser.toObject());
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    searchUsers = async (req: Request, res: Response, next: NextFunction) => {
+        const { login, username, location, company } = req.query;
+    
+        try {
+            const filters: Record<string, any> = {};
+            if (username) filters.login = username;
+            if (location) filters.location = location;
+            if (company) filters.company = company;
+            if (login) filters.login = login
+    
+            const users = await this.userInteractor.searchUsers(filters);
+            res.status(200).json(users);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    getAllSortedUsers = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const sortField = req.query.sort as string || 'login';
+            const sortOrder = req.query.order as string === 'desc' ? -1 : 1;
+            
+            const users = await this.userInteractor.getAllSortedUsers(sortField, sortOrder);
+            res.status(200).json(users);
         } catch (error) {
             next(error);
         }

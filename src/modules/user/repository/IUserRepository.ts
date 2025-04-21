@@ -6,5 +6,7 @@ export interface IUserRepository{
     save(user: UserEntity): Promise<UserEntity>;
     softDelete(username: string): Promise<void>;
     update(username: string, updateData: Partial<IUserProps>): Promise<UserEntity>;
+    search(filters: Record<string, any>): Promise<UserEntity[]>
+    findAllSorted(sortField?: string, sortOrder?: number): Promise<UserEntity[]>;
 
 }
